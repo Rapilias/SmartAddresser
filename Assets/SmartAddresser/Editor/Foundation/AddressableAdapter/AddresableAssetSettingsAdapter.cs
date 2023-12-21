@@ -18,7 +18,7 @@ namespace SmartAddresser.Editor.Foundation.AddressableAdapter
         public AddressableAssetSettingsAdapter(AddressableAssetSettings settings)
         {
             _settings = settings;
-            
+
             _removeAssetEntriesMethod = typeof(AddressableAssetGroup).GetMethod("RemoveAssetEntries", BindingFlags.Instance | BindingFlags.NonPublic);
             _createOrMoveEntriesMethod = typeof(AddressableAssetSettings).GetMethod("CreateOrMoveEntries", BindingFlags.Instance | BindingFlags.NonPublic);
         }
@@ -43,9 +43,9 @@ namespace SmartAddresser.Editor.Foundation.AddressableAdapter
             var group = _settings.FindGroup(groupName);
             var createdEntries = new List<AddressableAssetEntry>();
             var movedEntries = new List<AddressableAssetEntry>();
-            var parameters = new object[] {guids, group, createdEntries, movedEntries, };
+            var parameters = new object[] {guids, group, createdEntries, movedEntries, false, true, };
             _createOrMoveEntriesMethod.Invoke(_settings, parameters);
-            
+
             return createdEntries
                 .Concat(movedEntries)
                 .Where(entry=> entry != null)
@@ -67,7 +67,7 @@ namespace SmartAddresser.Editor.Foundation.AddressableAdapter
 
             // Note: Bulk delete is internal, so call via Reflection
             var entries = group.entries.ToArray();
-            var parameters = new object[] { entries, };
+            var parameters = new object[] { entries, true, };
             _removeAssetEntriesMethod.Invoke(group, parameters);
         }
 
