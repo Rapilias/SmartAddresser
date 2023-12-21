@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEditor.AddressableAssets.Settings;
 
 namespace SmartAddresser.Editor.Foundation.AddressableAdapter
@@ -9,6 +10,8 @@ namespace SmartAddresser.Editor.Foundation.AddressableAdapter
     {
         private readonly AddressableAssetSettings _settings;
 
+        // Note: internal void RemoveAssetEntries(IEnumerable<AddressableAssetEntry> removeEntries, bool postEvent = true)
+        private readonly MethodInfo _removeAssetEntriesMethod;
         // Note: internal void CreateOrMoveEntries(IEnumerable guids, AddressableAssetGroup targetParent, List<AddressableAssetEntry> createdEntries, List<AddressableAssetEntry> movedEntries, bool readOnly = false, bool postEvent = true)
         private readonly MethodInfo _createOrMoveEntriesMethod;
 
@@ -16,6 +19,7 @@ namespace SmartAddresser.Editor.Foundation.AddressableAdapter
         {
             _settings = settings;
             
+            _removeAssetEntriesMethod = typeof(AddressableAssetSettings).GetMethod("RemoveAssetEntries", BindingFlags.Instance | BindingFlags.NonPublic);
             _createOrMoveEntriesMethod = typeof(AddressableAssetSettings).GetMethod("CreateOrMoveEntries", BindingFlags.Instance | BindingFlags.NonPublic);
         }
 
@@ -61,9 +65,10 @@ namespace SmartAddresser.Editor.Foundation.AddressableAdapter
             if (group == null)
                 throw new InvalidOperationException($"Specified group '{groupName}' was not found.");
 
+            // Note: Bulk delete is internal, so call via Reflection
             var entries = group.entries.ToArray();
-            foreach (var entry in entries)
-                group.RemoveAssetEntry(entry);
+            var parameters = new object[] { entries, };
+            _removeAssetEntriesMethod.Invoke(group, parameters);
         }
 
         /// <inheritdoc />
