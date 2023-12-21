@@ -25,7 +25,7 @@ namespace SmartAddresser.Editor.Foundation.AddressableAdapter
         /// <inheritdoc />
         public void SetAddress(string address)
         {
-            if(string.Compare(_entry.AssetPath, address, StringComparison.Ordinal) == 0)
+            if(string.Compare(_entry.address, address, StringComparison.Ordinal) == 0)
                 return;
             _entry.SetAddress(address);
         }
