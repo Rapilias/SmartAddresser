@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEditor.AddressableAssets.Settings;
 
@@ -24,12 +25,16 @@ namespace SmartAddresser.Editor.Foundation.AddressableAdapter
         /// <inheritdoc />
         public void SetAddress(string address)
         {
+            if(string.Compare(_entry.AssetPath, address, StringComparison.Ordinal) == 0)
+                return;
             _entry.SetAddress(address);
         }
         
         /// <inheritdoc />
         public bool SetLabel(string label, bool enable)
         {
+            if(_entry.labels.Contains(label) == enable)
+                return true;
             return _entry.SetLabel(label, enable);
         }
     }
