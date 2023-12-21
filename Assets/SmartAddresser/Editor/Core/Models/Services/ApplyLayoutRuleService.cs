@@ -83,9 +83,8 @@ namespace SmartAddresser.Editor.Core.Models.Services
 
                 // If the layout rule was not found, return false.
                 if (!_layoutRule.TryProvideAddressAndAddressableGroup(assetPath, assetType, isFolder, doSetup,
-                        out _, out var addressableGroup
-                    ))
-                    continue;
+                        out _,
+                        out var addressableGroup))
 
                 // If the layout rule is found but the addressable asset group has already been destroyed, return false.
                 if (addressableGroup == null)
@@ -101,8 +100,7 @@ namespace SmartAddresser.Editor.Core.Models.Services
                         continue;
 
                     // If the version is not satisfied, return false.
-                    if (!string.IsNullOrEmpty(versionText) && Version.TryCreate(versionText, out var version) &&
-                        !comparator.IsSatisfied(version))
+                    if (!string.IsNullOrEmpty(versionText) && Version.TryCreate(versionText, out var version) && !comparator.IsSatisfied(version))
                         continue;
                 }
 
@@ -114,6 +112,7 @@ namespace SmartAddresser.Editor.Core.Models.Services
                 assetGuids.Add(assetGuid);
             }
 
+            // Update entries 
             foreach (var kvp in groupedGuids)
             {
                 var entryAdapters = _addressableSettingsAdapter.CreateOrMoveEntries(kvp.Key, kvp.Value);
@@ -152,7 +151,6 @@ namespace SmartAddresser.Editor.Core.Models.Services
             if (!_layoutRule.TryProvideAddressAndAddressableGroup(assetPath, assetType, isFolder, doSetup,
                     out var address,
                     out var addressableGroup))
-                return false;
 
             // If the layout rule is found but the addressable asset group has already been destroyed, return false.
             if (addressableGroup == null)
@@ -185,17 +183,14 @@ namespace SmartAddresser.Editor.Core.Models.Services
             return true;
         }
 
-        internal void UpdateAssetLabel(IAddressableAssetEntryAdapter entryAdapter, string assetPath, System.Type assetType,
-            bool isFolder, bool doSetup)
+        internal void UpdateAssetLabel(IAddressableAssetEntryAdapter entryAdapter, string assetPath, System.Type assetType, bool isFolder, bool doSetup)
         {
             // Add labels to addressable settings if not exists.
             var labels = _layoutRule.ProvideLabels(assetPath, assetType, isFolder, doSetup);
             var addressableLabels = _addressableSettingsAdapter.GetLabels();
             foreach (var label in labels)
-            {
                 if (!addressableLabels.Contains(label))
                     _addressableSettingsAdapter.AddLabel(label);
-            }
 
             // Remove old labels.
             var oldLabels = entryAdapter.Labels.ToArray();
