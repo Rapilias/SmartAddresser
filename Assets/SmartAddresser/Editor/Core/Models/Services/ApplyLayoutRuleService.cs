@@ -85,6 +85,7 @@ namespace SmartAddresser.Editor.Core.Models.Services
                 if (!_layoutRule.TryProvideAddressAndAddressableGroup(assetPath, assetType, isFolder, doSetup,
                         out _,
                         out var addressableGroup))
+                    continue;
 
                 // If the layout rule is found but the addressable asset group has already been destroyed, return false.
                 if (addressableGroup == null)
@@ -151,6 +152,7 @@ namespace SmartAddresser.Editor.Core.Models.Services
             if (!_layoutRule.TryProvideAddressAndAddressableGroup(assetPath, assetType, isFolder, doSetup,
                     out var address,
                     out var addressableGroup))
+                return false;
 
             // If the layout rule is found but the addressable asset group has already been destroyed, return false.
             if (addressableGroup == null)
