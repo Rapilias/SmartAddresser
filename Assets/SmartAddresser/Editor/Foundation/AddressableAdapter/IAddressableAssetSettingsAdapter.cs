@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor.AddressableAssets.Settings;
 
 namespace SmartAddresser.Editor.Foundation.AddressableAdapter
 {
@@ -22,6 +21,14 @@ namespace SmartAddresser.Editor.Foundation.AddressableAdapter
         /// <param name="guid">The asset guid.</param>
         /// <returns>The created entry adapter.</returns>
         IAddressableAssetEntryAdapter CreateOrMoveEntry(string groupName, string guid);
+        
+        /// <summary>
+        ///     Create a new entries, or if one exists in a different group, move it into the new group.
+        /// </summary>
+        /// <param name="groupName"></param>
+        /// <param name="guids">The asset guids.</param>
+        /// <returns>The created entry adapters.</returns>
+        IEnumerable<IAddressableAssetEntryAdapter> CreateOrMoveEntries(string groupName, IEnumerable<string> guids);
 
         /// <summary>
         ///     Remove an asset entry.
