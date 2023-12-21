@@ -19,7 +19,7 @@ namespace SmartAddresser.Editor.Foundation.AddressableAdapter
         {
             _settings = settings;
             
-            _removeAssetEntriesMethod = typeof(AddressableAssetSettings).GetMethod("RemoveAssetEntries", BindingFlags.Instance | BindingFlags.NonPublic);
+            _removeAssetEntriesMethod = typeof(AddressableAssetGroup).GetMethod("RemoveAssetEntries", BindingFlags.Instance | BindingFlags.NonPublic);
             _createOrMoveEntriesMethod = typeof(AddressableAssetSettings).GetMethod("CreateOrMoveEntries", BindingFlags.Instance | BindingFlags.NonPublic);
         }
 
