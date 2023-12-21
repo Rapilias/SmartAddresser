@@ -9,9 +9,14 @@ namespace SmartAddresser.Editor.Foundation.AddressableAdapter
     {
         private readonly AddressableAssetSettings _settings;
 
+        // Note: internal void CreateOrMoveEntries(IEnumerable guids, AddressableAssetGroup targetParent, List<AddressableAssetEntry> createdEntries, List<AddressableAssetEntry> movedEntries, bool readOnly = false, bool postEvent = true)
+        private readonly MethodInfo _createOrMoveEntriesMethod;
+
         public AddressableAssetSettingsAdapter(AddressableAssetSettings settings)
         {
             _settings = settings;
+            
+            _createOrMoveEntriesMethod = typeof(AddressableAssetSettings).GetMethod("CreateOrMoveEntries", BindingFlags.Instance | BindingFlags.NonPublic);
         }
 
         /// <inheritdoc />
@@ -27,6 +32,20 @@ namespace SmartAddresser.Editor.Foundation.AddressableAdapter
             var group = _settings.FindGroup(groupName);
             var entry = _settings.CreateOrMoveEntry(guid, group);
             return entry == null ? null : new AddressableAssetEntryAdapter(entry);
+        }
+
+        public IEnumerable<IAddressableAssetEntryAdapter> CreateOrMoveEntries(string groupName, IEnumerable<string> guids)
+        {
+            var group = _settings.FindGroup(groupName);
+            var createdEntries = new List<AddressableAssetEntry>();
+            var movedEntries = new List<AddressableAssetEntry>();
+            var parameters = new object[] {guids, group, createdEntries, movedEntries, };
+            _createOrMoveEntriesMethod.Invoke(_settings, parameters);
+            
+            return createdEntries
+                .Concat(movedEntries)
+                .Where(entry=> entry != null)
+                .Select(entry => new AddressableAssetEntryAdapter(entry));
         }
 
         /// <inheritdoc />
