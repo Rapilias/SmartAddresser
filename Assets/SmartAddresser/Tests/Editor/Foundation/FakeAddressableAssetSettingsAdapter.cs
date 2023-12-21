@@ -35,6 +35,11 @@ namespace SmartAddresser.Tests.Editor.Foundation
             return entry.Adapter;
         }
 
+        public IEnumerable<IAddressableAssetEntryAdapter> CreateOrMoveEntries(string groupName, IEnumerable<string> guids)
+        {
+            return guids.Select(guid => CreateOrMoveEntry(groupName, guid));
+        }
+
         /// <inheritdoc />
         public bool RemoveEntry(string guid)
         {
