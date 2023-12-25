@@ -17,6 +17,8 @@ namespace SmartAddresser.Editor.Core.Tools.Addresser.Shared.AssetGroups.AssetFil
 
         protected override void GUILayout(TypeBasedAssetFilter target)
         {
+            target.IgnoreFilter = EditorGUILayout.Toggle(
+                ObjectNames.NicifyVariableName(nameof(Target.IgnoreFilter)), Target.IgnoreFilter);
             target.MatchWithDerivedTypes = EditorGUILayout.Toggle(
                 ObjectNames.NicifyVariableName(nameof(Target.MatchWithDerivedTypes)), Target.MatchWithDerivedTypes);
             _listablePropertyGUI.DoLayout();

@@ -7,53 +7,63 @@ namespace SmartAddresser.Tests.Editor.Core.Models.Shared.AssetGroups.AssetFilter
 {
     internal sealed class TypeBasedAssetFilterTest
     {
-        [Test]
-        public void IsMatch_SetMatchedType_ReturnTrue()
+        [TestCase(arg: false, ExpectedResult = true)]
+        [TestCase(arg: true, ExpectedResult = false)]
+        public bool IsMatch_SetMatchedType(bool ignoreFilter)
         {
             var filter = new TypeBasedAssetFilter();
             filter.Type.Value = TypeReference.Create(typeof(Texture2D));
+            filter.IgnoreFilter = ignoreFilter;
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test.png", typeof(Texture2D), false), Is.True);
+            return filter.IsMatch("Assets/Test.png", typeof(Texture2D), false);
         }
         
-        [Test]
-        public void IsMatch_SetDerivedType_ReturnTrue()
+        [TestCase(arg: false, ExpectedResult = true)]
+        [TestCase(arg: true, ExpectedResult = false)]
+        public bool IsMatch_SetDerivedType(bool ignoreFilter)
         {
             var filter = new TypeBasedAssetFilter();
             filter.Type.Value = TypeReference.Create(typeof(Texture));
+            filter.IgnoreFilter = ignoreFilter;
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test.png", typeof(Texture2D), false), Is.True);
+            return filter.IsMatch("Assets/Test.png", typeof(Texture2D), false);
         }
         
-        [Test]
-        public void IsMatch_SetNotMatchedType_ReturnFalse()
+        [TestCase(arg: false, ExpectedResult = false)]
+        [TestCase(arg: true, ExpectedResult = true)]
+        public bool IsMatch_SetNotMatchedType(bool ignoreFilter)
         {
             var filter = new TypeBasedAssetFilter();
             filter.Type.Value = TypeReference.Create(typeof(Texture3D));
+            filter.IgnoreFilter = ignoreFilter;
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test.png", typeof(Texture2D), false), Is.False);
+            return filter.IsMatch("Assets/Test.png", typeof(Texture2D), false);
         }
 
-        [Test]
-        public void IsMatch_ContainsMatched_ReturnTrue()
+        [TestCase(arg: false, ExpectedResult = true)]
+        [TestCase(arg: true, ExpectedResult = false)]
+        public bool IsMatch_ContainsMatched(bool ignoreFilter)
         {
             var filter = new TypeBasedAssetFilter();
             filter.Type.IsListMode = true;
             filter.Type.AddValue(TypeReference.Create(typeof(Texture3D)));
             filter.Type.AddValue(TypeReference.Create(typeof(Texture2D)));
+            filter.IgnoreFilter = ignoreFilter;
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test.png", typeof(Texture2D), false), Is.True);
+            return filter.IsMatch("Assets/Test.png", typeof(Texture2D), false);
         }
 
-        [Test]
-        public void IsMatch_NotContainsMatched_ReturnTrue()
+        [TestCase(arg: false, ExpectedResult = false)]
+        [TestCase(arg: true, ExpectedResult = true)]
+        public bool IsMatch_NotContainsMatched(bool ignoreFilter)
         {
             var filter = new TypeBasedAssetFilter();
             filter.Type.IsListMode = true;
             filter.Type.AddValue(TypeReference.Create(typeof(Texture3D)));
             filter.Type.AddValue(TypeReference.Create(typeof(Texture2D)));
+            filter.IgnoreFilter = ignoreFilter;
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test.png", typeof(Texture2DArray), false), Is.False);
+            return filter.IsMatch("Assets/Test.png", typeof(Texture2DArray), false);
         }
     }
 }
