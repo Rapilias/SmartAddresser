@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -14,6 +14,7 @@ namespace SmartAddresser.Editor.Core.Models.Shared.AssetGroups.AssetFilterImpl
     {
         [SerializeField] private TypeReferenceListableProperty _type = new TypeReferenceListableProperty();
         [SerializeField] private bool _matchWithDerivedTypes = true;
+        [SerializeField] private bool _ignoreFilter = false;
 
         private Dictionary<Type, bool> _resultCache = new Dictionary<Type, bool>();
         private object _resultCacheLocker = new object();
@@ -28,6 +29,12 @@ namespace SmartAddresser.Editor.Core.Models.Shared.AssetGroups.AssetFilterImpl
         {
             get => _matchWithDerivedTypes;
             set => _matchWithDerivedTypes = value;
+        }
+
+        public bool IgnoreFilter
+        {
+            get => _ignoreFilter;
+            set => _ignoreFilter = value;
         }
 
         public override void SetupForMatching()
@@ -50,6 +57,12 @@ namespace SmartAddresser.Editor.Core.Models.Shared.AssetGroups.AssetFilterImpl
 
         /// <inheritdoc />
         public override bool IsMatch(string assetPath, Type assetType, bool isFolder)
+        {
+            var result = this.IsMatchInternal(assetPath, assetType, isFolder);
+            return this._ignoreFilter ? !result : result;
+        }
+
+        public bool IsMatchInternal(string assetPath, Type assetType, bool isFolder)
         {
             if (assetType == null)
                 return false;
@@ -89,6 +102,10 @@ namespace SmartAddresser.Editor.Core.Models.Shared.AssetGroups.AssetFilterImpl
         {
             var result = new StringBuilder();
             var elementCount = 0;
+            if(IgnoreFilter)
+            {
+                result.Append("Not ");
+            }
             foreach (var type in _type)
             {
                 if (type == null || string.IsNullOrEmpty(type.Name))
